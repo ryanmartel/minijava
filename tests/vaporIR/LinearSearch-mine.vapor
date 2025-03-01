@@ -1,0 +1,179 @@
+func Main()
+  t.1 = HeapAllocZ(12)
+  [t.1] = :functable_LS
+  if t.1 goto :null1
+  Error("null pointer")
+  null1:
+  t.2 = [t.1]
+  t.2 = [t.2+0]
+  t.3 = call t.2(t.1 10)
+  PrintIntS(t.3)
+  ret
+
+func LS_Start(this sz)
+  if this goto :null2
+  Error("null pointer")
+  null2:
+  t.1 = [this]
+  t.1 = [t.1+12]
+  t.2 = call t.1(this sz)
+  aux01 = t.2
+  if this goto :null3
+  Error("null pointer")
+  null3:
+  t.3 = [this]
+  t.3 = [t.3+4]
+  t.4 = call t.3(this)
+  aux02 = t.4
+  PrintIntS(9999)
+  if this goto :null4
+  Error("null pointer")
+  null4:
+  t.5 = [this]
+  t.5 = [t.5+8]
+  t.6 = call t.5(this 8)
+  PrintIntS(t.6)
+  if this goto :null5
+  Error("null pointer")
+  null5:
+  t.7 = [this]
+  t.7 = [t.7+8]
+  t.8 = call t.7(this 12)
+  PrintIntS(t.8)
+  if this goto :null6
+  Error("null pointer")
+  null6:
+  t.9 = [this]
+  t.9 = [t.9+8]
+  t.10 = call t.9(this 17)
+  PrintIntS(t.10)
+  if this goto :null7
+  Error("null pointer")
+  null7:
+  t.11 = [this]
+  t.11 = [t.11+8]
+  t.12 = call t.11(this 50)
+  PrintIntS(t.12)
+  ret 55
+
+func LS_Print(this)
+  j = 1
+  while1_top:
+  t.1 = [this+8]
+  t.2 = LtS(j t.1)
+  if0 t.2 goto :while1_end
+  t.3 = [this+4]
+  if t.3 goto :null8
+  Error("null pointer")
+  null8:
+  t.4 = [t.3]
+  t.4 = LtS(j t.4)
+  if t.4 goto :bounds1
+  Error("array index out of bounds")
+  bounds1:
+  t.4 = MulS(j 4)
+  t.4 = Add(t.4 t.3)
+  t.5 = [t.4+4]
+  PrintIntS(t.5)
+  t.6 = Add(j 1)
+  j = t.6
+  goto :while1_top
+  while1_end:
+  ret 0
+
+func LS_Search(this num)
+  j = 1
+  ls01 = 0
+  ifound = 0
+  while2_top:
+  t.1 = [this+8]
+  t.2 = LtS(j t.1)
+  if0 t.2 goto :while2_end
+  t.3 = [this+4]
+  if t.3 goto :null9
+  Error("null pointer")
+  null9:
+  t.4 = [t.3]
+  t.4 = LtS(j t.4)
+  if t.4 goto :bounds2
+  Error("array index out of bounds")
+  bounds2:
+  t.4 = MulS(j 4)
+  t.4 = Add(t.4 t.3)
+  t.5 = [t.4+4]
+  aux01 = t.5
+  t.6 = Add(num 1)
+  aux02 = t.6
+  t.7 = LtS(aux01 num)
+  if0 t.7 goto :if1_else
+  nt = 0
+  goto :if1_end
+  if1_else:
+  t.8 = LtS(aux01 aux02)
+  t.9 = Sub(1 t.8)
+  if0 t.9 goto :if2_else
+  nt = 0
+  goto :if2_end
+  if2_else:
+  ls01 = 1
+  ifound = 1
+  t.10 = [this+8]
+  j = t.10
+  if2_end:
+  if1_end:
+  t.11 = Add(j 1)
+  j = t.11
+  goto :while2_top
+  while2_end:
+  ret ifound
+
+func LS_Init(this sz)
+  [this+8] = sz
+  t.1 = call :AllocArray(sz)
+  [this+4] = t.1
+  j = 1
+  t.2 = [this+8]
+  t.3 = Add(t.2 1)
+  k = t.3
+  while3_top:
+  t.4 = [this+8]
+  t.5 = LtS(j t.4)
+  if0 t.5 goto :while3_end
+  t.6 = MulS(2 j)
+  aux01 = t.6
+  t.7 = Sub(k 3)
+  aux02 = t.7
+  t.8 = [this+4]
+  if t.8 goto :null10
+  Error("null pointer")
+  null10:
+  t.9 = [t.8]
+  t.9 = Lt(j t.9)
+  if t.9 goto :bounds3
+  Error("array index out of bounds")
+  bounds3:
+  t.9 = MulS(j 4)
+  t.9 = Add(t.9 t.8)
+  t.10 = Add(aux01 aux02)
+  [t.9+4] = t.10
+  t.11 = Add(j 1)
+  j = t.11
+  t.12 = Sub(k 1)
+  k = t.12
+  goto :while3_top
+  while3_end:
+  ret 0
+
+const functable_LS
+  :LS_Start
+  :LS_Print
+  :LS_Search
+  :LS_Init
+
+func AllocArray(size)
+  bytes = MulS(size 4)
+  bytes = Add(bytes 4)
+  v = HeapAllocZ(bytes)
+  [v] = size
+  ret v
+

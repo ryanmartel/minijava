@@ -1,0 +1,47 @@
+#!/bin/bash
+
+input=$1
+base="$(basename "$input")"
+file_name="${base%.*}"
+echo "$file_name"
+
+# Create a temporary file
+temp_file=$(mktemp)
+temp_file2=$(mktemp)
+
+# Check if the temporary file was created successfully
+if [ -z "$temp_file" ]; then
+  echo "Error creating temporary file"
+  exit 1
+fi
+
+if [ -z "$temp_file2" ]; then
+  echo "Error creating temporary file"
+  exit 1
+fi
+
+# Trap to remove the temporary file on exit or error
+trap 'rm -f "$temp_file"' EXIT ERR
+trap 'rm -f "$temp_file2"' EXIT ERR
+
+if ! java -jar ./typecheck/build/libs/typecheck-uber.jar < "$input" ; then
+    echo "Typechecking Failed"
+    exit 1
+fi
+if ! java -jar ./vaporGen/build/libs/vaporGen-uber.jar < "$input" > "$temp_file" ; then
+    echo "Vapor Generation Failed"
+    exit 1
+fi
+if ! java -jar ./vaporMGen/build/libs/vaporMGen-uber.jar < "$temp_file" > "$temp_file2" ; then
+    echo "VaporM Generation Failed"
+    exit 1
+fi
+if ! java -jar ./mipsGen/build/libs/mipsGen-uber.jar < "$temp_file2" > "$file_name.s" ; then
+    echo "Mips Generation Failed"
+    rm -f "$file_name.s"
+    exit 1
+fi
+# # echo $vapor
+# vaporM=$(./gradlew :vaporMGen:run --quiet < "$temp_file" > "$temp_file")
+# mips=$(./gradlew :mipsGen:run --quiet < "$temp_file" > "$temp_file")
+# # echo $mips

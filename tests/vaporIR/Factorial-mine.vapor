@@ -1,0 +1,33 @@
+func Main()
+  t.1 = HeapAllocZ(4)
+  [t.1] = :functable_Fac
+  if t.1 goto :null1
+  Error("null pointer")
+  null1:
+  t.2 = [t.1]
+  t.2 = [t.2+0]
+  t.3 = call t.2(t.1 10)
+  PrintIntS(t.3)
+  ret
+
+func Fac_ComputeFac(this num)
+  t.1 = LtS(num 1)
+  if0 t.1 goto :if1_else
+  num_aux = 1
+  goto :if1_end
+  if1_else:
+  if this goto :null2
+  Error("null pointer")
+  null2:
+  t.2 = [this]
+  t.2 = [t.2+0]
+  t.4 = Sub(num 1)
+  t.3 = call t.2(this t.4)
+  t.5 = MulS(num t.3)
+  num_aux = t.5
+  if1_end:
+  ret num_aux
+
+const functable_Fac
+  :Fac_ComputeFac
+

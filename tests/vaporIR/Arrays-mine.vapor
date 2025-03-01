@@ -1,0 +1,68 @@
+func Main()
+  t.1 = HeapAllocZ(12)
+  [t.1] = :functable_A
+  if t.1 goto :null1
+  Error("null pointer")
+  null1:
+  t.2 = [t.1]
+  t.3 = [t.2+0]
+  t.4 = call t.3(t.1 4)
+  PrintIntS(t.4)
+  ret
+
+func A_foo(this i)
+  t.5 = call :AllocArray(4)
+  [this+4] = t.5
+  t.6 = [this+4]
+  if t.6 goto :null2
+  Error("null pointer")
+  null2:
+  t.7 = [t.6]
+  t.7 = Lt(1 t.7)
+  if t.7 goto :bounds1
+  Error("array index out of bounds")
+  bounds1:
+  t.7 = MulS(1 4)
+  t.7 = Add(t.7 t.6)
+  [t.7+4] = 2
+  t.8 = [this+4]
+  if t.8 goto :null3
+  Error("null pointer")
+  null3:
+  t.9 = [t.8]
+  t.9 = Lt(2 t.9)
+  if t.9 goto :bounds2
+  Error("array index out of bounds")
+  bounds2:
+  t.9 = MulS(2 4)
+  t.9 = Add(t.9 t.8)
+  [t.9+4] = 3
+  t.10 = [this+4]
+  if t.10 goto :null4
+  Error("null pointer")
+  null4:
+  t.11 = [t.10]
+  t.11 = Lt(0 t.11)
+  if t.11 goto :bounds3
+  Error("array index out of bounds")
+  bounds3:
+  t.11 = MulS(0 4)
+  t.11 = Add(t.11 t.10)
+  [t.11+4] = 1
+  t.12 = [this+4]
+  if t.12 goto :null5
+  Error("null pointer")
+  null5:
+  t.13 = [t.12]
+  ret t.13
+
+const functable_A
+  :A_foo
+
+func AllocArray(size)
+  bytes = MulS(size 4)
+  bytes = Add(bytes 4)
+  v = HeapAllocZ(bytes)
+  [v] = size
+  ret v
+
